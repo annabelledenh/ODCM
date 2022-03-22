@@ -14,12 +14,13 @@ library(car)
 library(rjson)
 library(data.table)
 library(stringr)
+library(googledrive)
 
 # Import data
-setwd("C:/Users/Gebruiker/Documents/0. Master Marketing Analytics/Skills Online Data Coll. & Mgt/ODCM/data")
-df <- read.csv("mediamarkt_scraper_output.csv")
+data_id <-"1S2Ec1A2RFnRdZAG2Hae3FwWISxkUM0FS" #the id of the dataset
+drive_download(as_id(data_id), path = "mediamarkt_scraper_output.csv", overwrite = TRUE) #download the data from the drive
+df <-read.csv("mediamarkt_scraper_output.csv") #save the data in a dataframe
 View(df)
-
 
                                                   ####################
                                                   ##data-preparation##

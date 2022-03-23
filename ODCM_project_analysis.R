@@ -26,9 +26,6 @@ View(df)
                                                   ##data-preparation##
                                                   ####################
 
-# Remove superfluous columns
-df <- df %>% select(-Beeldschermdiagonaal..cm.inch..)
-
 # Remove inconvenient text 
 df$price <- (gsub(",-", "", df$price))                                                # ',-' from 'price' variable
 df$Beeldschermdiagonaal..cm.. <- (gsub("cm", "", df$Beeldschermdiagonaal..cm..))      # 'cm' from 'Beeldschermdiagonaal..cm..' variable
@@ -91,29 +88,81 @@ ggplot(plotdata_devices,
 # means and standard deviations per device type
 mean_prices <- df %>% group_by(device_type) %>%         
   summarise(mean_price = mean(price, na.rm = TRUE))                                      # mean price
+View(mean_prices)
 sd_prices <- df %>% group_by(device_type) %>% 
   summarise(sd_prices = sd(price, na.rm = TRUE))                                         # standard deviation price
+View(sd_prices)
 
 mean_rating <- df %>% group_by(device_type) %>%         
   summarise(mean_rating = mean(rating, na.rm = TRUE))                                    # mean rating
+View(mean_rating)
 sd_rating <- df %>% group_by(device_type) %>% 
   summarise(sd_rating = sd(rating, na.rm = TRUE))                                        # standard deviation rating
+View(sd_rating)
 
 mean_nr_reviews <- df %>% group_by(device_type) %>%         
   summarise(mean_nr_reviews = mean(nr_reviews, na.rm = TRUE))                            # mean nr reviews
+View(mean_nr_reviews)
 sd_nr_reviews <- df %>% group_by(device_type) %>% 
   summarise(sd_nr_reviews = sd(nr_reviews, na.rm = TRUE))                                # standard deviation nr reviews
-
+View(sd_nr_reviews)
                                                                                        
 ggplot(mean_prices, aes(x = device_type, y= mean_price)) + 
   geom_bar(stat = "identity", fill = "indianred3", color = "black") +                    # mean prices per device type
   geom_text(aes(label = mean_price), vjust = 2, size = 4) +
   labs(x = "Device type", y = "Mean price", title  = "Mean prices per device type") 
 
-# statistics of device specifications
-???????????????????
-???????????????????
-???????????????????
+# statistics of device specifications per device type
+Mobiele_telefoons <- filter(df, device_type == "Mobiele telefoons")                      # subset 'Mobiele telefoons'
+
+best_systeem <- Mobiele_telefoons %>% group_by(brand) %>%  count(Besturingssysteem.)     # distribution of 'Besturingssysteem' in 'Mobiele telefoons' by brand
+View(best_systeem)
+
+geh_cap <- Mobiele_telefoons %>% group_by(brand) %>%  count(Geheugencapaciteit.)         # distribution of 'Geheugencapaciteit' in 'Mobiele telefoons' by brand
+View(geh_cap)
+
+sim_format <- Mobiele_telefoons %>% group_by(brand) %>%  count(Simkaartformaat.)         # distribution of 'Simkaartformaat' in 'Mobiele telefoons' by brand
+View(sim_format)
+
+
+
+
+Laptops <- filter(df, device_type == "Laptops")                                          # subset 'Laptops'
+
+laptop_touch <- Laptops %>% group_by(brand) %>%  count(Touchscreen.)                     # distribution of 'Touchscreen' for laptops by brand
+View(laptop_touch)
+
+laptop_scr_res <- Laptops %>% group_by(brand) %>%  count(Beeldresolutie.)                # distribution of 'Beeldresolutie' for laptops by brand
+View(laptop_scr_res)
+
+laptop_scr_mean <- Laptops %>% group_by(brand) %>%         
+  summarise(mean_scr_cm = mean(as.numeric(Beeldschermdiagonaal..cm..), na.rm = TRUE))    # mean screensize in cm for laptops by brand
+View(laptop_scr_mean)
+
+
+
+
+Tablets <- filter(df, device_type == "Tablets")                                          # subset 'Tablets' 
+
+tablet_scr_res <- Laptops %>% group_by(brand) %>%  count(Beeldresolutie.)                # distribution of 'Beeldresolutie' for tablets by brand
+View(tablet_scr_res)
+
+tablet_scr_mean <- Tablets %>% group_by(brand) %>%         
+  summarise(mean_scr_cm = mean(as.numeric(Beeldschermdiagonaal..cm..), na.rm = TRUE))    # mean screensize in cm for tablets by brand
+View(tablet_scr_mean)
+
+
+
+
+Televisions <- filter(df, device_type == "Televisies")                                   # subset 'Televisies'
+
+tv_scr_mean <- Televisions %>% group_by(brand) %>%         
+  summarise(mean_scr_cm = mean(as.numeric(Beeldschermdiagonaal..cm..), na.rm = TRUE))    # mean screensize in cm for televisions by brand
+View(tv_scr_mean)
+
+tv_scr_res <- Televisions %>% group_by(brand) %>%  count(Beeldresolutie.)                # distribution of 'Beeldresolutie' for televisions by brand
+View(tv_scr_res)
+
 
 
                                               #####################
@@ -126,7 +175,7 @@ tab_s <- sort(tab)                            # sort
 top15 <- tail(names(tab_s), 15)               # extract 15 most frequent brands
 df_common <- subset(df, brand %in% top15)     # subset of data frame based on common brands
 
-# price distributions per category
+# price distributions per brand
 boxplot(df_common$price~df_common$brand,main="General price distribution by brand", 
         ylab="", xlab="price", ylim=c(100, 4000), horizontal = TRUE, las = 2)
 

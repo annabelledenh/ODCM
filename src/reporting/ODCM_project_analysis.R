@@ -52,6 +52,8 @@ df$device_type <- (gsub("XIAOMI 12 256GB - Grijs|XIAOMI POCO X4 Pro 5G 256GB - Z
 # Add column consisting of brand names
 df$brand <-word(unlist(df$name[1:1580]))
 
+summary(df)
+
                                                 ####################
                                                 ###data-analysis####
                                                 ####################
@@ -62,28 +64,26 @@ ggplot(df,
   geom_bar(position = "stack") + coord_flip()
 
 # number of units per categorical variables
-count(df, vars = device_type)                   # for device_type
-ggplot(df, aes(x = device_type)) + 
-  geom_bar()
 
 total_brand <- count(df, vars = brand)          # for brand
 View(total_brand)
 ggplot(df, aes(x = brand)) + 
   geom_bar() + coord_flip()
 
+ggplot(plotdata_devices, 
+       aes(x = reorder(device_type, n),                                     
+           y = n)) + 
+  geom_bar(stat = "identity", fill = "indianred3", color = "black") +             # total units per device type                     
+  geom_text(aes(label = n), vjust = 2, size = 4) +
+  labs(x = "Device type", 
+       y = "Frequency", 
+       title  = "Distribution of device types")
+
 # distribution of device types 
 plotdata_devices <- df %>%
   count(device_type)                                                            
 View(plotdata_devices)                                                      
                                         
-ggplot(plotdata_devices, 
-       aes(x = reorder(device_type, n),                                     
-           y = n)) + 
-  geom_bar(stat = "identity", fill = "indianred3", color = "black") +                    # total units per device type                     
-  geom_text(aes(label = n), vjust = 2, size = 4) +
-  labs(x = "Device type", 
-       y = "Frequency", 
-       title  = "Distribution of device types")
 
 # means and standard deviations per device type
 mean_prices <- df %>% group_by(device_type) %>%         
@@ -174,6 +174,7 @@ tab <- table(df$brand)                        # calculate frequencies
 tab_s <- sort(tab)                            # sort
 top15 <- tail(names(tab_s), 15)               # extract 15 most frequent brands
 df_common <- subset(df, brand %in% top15)     # subset of data frame based on common brands
+View(df_common)
 
 # price distributions per brand
 boxplot(df_common$price~df_common$brand,main="General price distribution by brand", 
